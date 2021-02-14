@@ -25,7 +25,12 @@ def products(request):
     # {'pruducts':products} - передать в шаблон контекст для вывода
     return render(request, 'accounts/products.html', {'products':products})
 
-def customer(request):
-    return render(request, 'accounts/customer.html')
+def customer(request, pk):
+    # Получить пользователя по id
+    customer = Customer.objects.get(id = pk)
+    orders = customer.order_set.all()
+    orders_count = orders.count()
+    context = {'customer': customer, 'orders': orders, 'orders_count': orders_count}
+    return render(request, 'accounts/customer.html', context)
 
 # Create your views here.
