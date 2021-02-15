@@ -33,4 +33,7 @@ def customer(request, pk):
     context = {'customer': customer, 'orders': orders, 'orders_count': orders_count}
     return render(request, 'accounts/customer.html', context)
 
-# Create your views here.
+def createOrders(request):
+
+    context = {}
+    return render(request, 'accounts/order_form.html', context)
