@@ -35,6 +35,7 @@ def customer(request, pk):
     return render(request, 'accounts/customer.html', context)
 
 def createOrders(request):
+    # Создание заказа
     form = OrderForm()
     # При отправленной форме с данными
     if request.method == 'POST':
@@ -45,6 +46,22 @@ def createOrders(request):
             form.save()
             return redirect ('/')
 
+    context = {'form': form}
+    return render(request, 'accounts/order_form.html', context)
+
+
+def updateOrder(request, pk):
+    # Обновление заказа
+    order = Order.objects.get(id = pk)
+    form = OrderForm(instance = order)
+
+    if request.method == 'POST':
+        #print (request.POST)
+        # создаем новую форму с заполненными данными
+        form = OrderForm(request.POST, instance = order)
+        if form.is_valid:
+            form.save()
+            return redirect ('/')
 
     context = {'form': form}
     return render(request, 'accounts/order_form.html', context)

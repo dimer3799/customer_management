@@ -10,12 +10,13 @@
 			<a class="btn btn-primary  btn-sm btn-block" href="">Создать клиента</a>
 			<table class="table table-sm">
 				<tr>
-					
+					<th></th>
 					<th>Клиент</th>
 					<th>Телефон</th>
 				</tr>
 				{% for customer in customers %}
 					<tr>
+						<td><a class="btn btn-outline-info  btn-sm btn-block" href="#">Просмотр</a></td>
 						<td>{{ customer.name }}</td>
 						<td>{{ customer.phone }}</td>
 					</tr>
@@ -44,8 +45,8 @@
 						<td>{{ order.product }}</td>
 						<td>{{ order.date_created }}</td>
 						<td>{{ order.status }}</td>
-						<td><a href="#">Обновление</a></td>
-						<td><a href="#">Удаление</a></td>
+						<td><a class="btn btn-outline-info  btn-sm btn-block" href="{% url 'update_order' order.id %}">Обновление</a></td>
+						<td><a class="btn btn-outline-danger  btn-sm btn-block" href="#">Удаление</a></td>
 					</tr>
 
 					{% endfor %}
