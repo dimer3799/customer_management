@@ -65,4 +65,6 @@ class Order(models.Model):
     class Meta:
         verbose_name_plural = 'Заказы'
         verbose_name = 'Заказ'
-    
+
+    def __str__(self):
+        return self.product.name

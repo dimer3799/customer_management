@@ -65,3 +65,10 @@ def updateOrder(request, pk):
 
     context = {'form': form}
     return render(request, 'accounts/order_form.html', context)
+
+
+def deleteOrder(request, pk):
+    # Удаление товара
+    order = Order.objects.get(id = pk)
+    context = {'item': order}
+    return render(request, 'accounts/delete_order.html', context)
