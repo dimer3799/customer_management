@@ -70,5 +70,12 @@ def updateOrder(request, pk):
 def deleteOrder(request, pk):
     # Удаление товара
     order = Order.objects.get(id = pk)
+    # Если пришла заполненная форма на удаление
+    if request.method == 'POST':
+        # Удаление заказа
+        order.delete()
+        # Перенаправдяем на домашнюю страницу
+        return redirect('/')
+
     context = {'item': order}
     return render(request, 'accounts/delete_order.html', context)

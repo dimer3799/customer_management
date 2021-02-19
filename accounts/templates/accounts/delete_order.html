@@ -1,11 +1,19 @@
 {% extends 'accounts/base.html ' %}
 {% load static %}
 {% block content %}
-<p>Вы действительно хотите удалить "{{ item }}"?</p>
+<br>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card card-body">
 
-<form action="" method="POST">
-    {% csrf_token %}
-    <a href = "{% url 'home' %}">Отмена</a>
-    <input type = "submit" name = "Cofirm">
-</form>
+            <p>Вы действительно хотите удалить "{{ item }}"?</p>
+
+            <form action="{% url 'delete_order' item.id %}" method="POST">
+                {% csrf_token %}
+                <a class="btn btn-warning" href = "{% url 'home' %}">Отмена</a>
+                <input class="btn btn-danger" type = "submit" name = "Cofirm">
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}
