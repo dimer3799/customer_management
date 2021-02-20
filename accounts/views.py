@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
+from django.forms import inlineformset_factory
 from .models import Customer, Pruduct, Order
 from .forms import OrderForm
 
@@ -34,19 +35,27 @@ def customer(request, pk):
     context = {'customer': customer, 'orders': orders, 'orders_count': orders_count}
     return render(request, 'accounts/customer.html', context)
 
-def createOrders(request):
-    # Создание заказа
-    form = OrderForm()
+def createOrders(request, pk):
+    # inlineformset_factory - объединение моделей в форме Customer (родительский объект) Order (дочерний объект)
+    # fields - разрешение полей для Order (заказа) - продукция и статус
+    # extra - вывд 10 строк на форме
+    OrderFormSet = inlineformset_factory(Customer, Order, fields = ('product', 'status'), extra= 10)
+    customer = Customer.objects.get(id = pk)
+    # Форма с набором OrderFormSet, instance - ссылается на объект customer
+    formset = OrderFormSet(queryset = Order.objects.none(), instance = customer)
+    # Создание заказа 
+    #form = OrderForm(initial = {'customer':customer})
     # При отправленной форме с данными
     if request.method == 'POST':
         #print (request.POST)
         # создаем новую форму с заполненными данными
-        form = OrderForm(request.POST)
-        if form.is_valid:
-            form.save()
+        #form = OrderForm(request.POST)
+        formset = OrderFormSet(request.POST, instance = customer)
+        if formset.is_valid:
+            formset.save()
             return redirect ('/')
 
-    context = {'form': form}
+    context = {'formset': formset}
     return render(request, 'accounts/order_form.html', context)
 
 

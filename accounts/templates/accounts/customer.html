@@ -8,7 +8,7 @@
 			<h5>Клиент: {{ customer.name }}</h5>
 			<hr>
 			<a class="btn btn-outline-info  btn-sm btn-block" href="">Обновить данные</a>
-			<a class="btn btn-outline-danger  btn-sm btn-block" href="">Удалить клиента</a>
+			<a class="btn btn-outline-info  btn-sm btn-block" href="{% url 'create_order' customer.id %}">Дабавить заказ</a>
 
 		</div>
 	</div>
