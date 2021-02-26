@@ -1,5 +1,5 @@
 import django_filters
-from django_filters import DateFilter
+from django_filters import DateFilter, CharFilter
 from .models import Order
 
 class OrderFilter(django_filters.FilterSet):
@@ -10,6 +10,8 @@ class OrderFilter(django_filters.FilterSet):
     # lookup_expr - параметры поиска (gte - больше или равно, lte - меньше или равно)
     start_date = DateFilter(field_name = 'date_created', lookup_expr = 'gte')
     end_date = DateFilter(field_name = 'date_created', lookup_expr = 'lte')
+    # lookup_expr = 'icontains' игнорировать регистр
+    note = CharFilter(field_name = 'note', lookup_expr = 'icontains')
     class Meta:
         # model - на основе какокой модели
         model = Order

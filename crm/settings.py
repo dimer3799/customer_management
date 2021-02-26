@@ -112,7 +112,11 @@ TIME_ZONE = 'Europe/Samara'
 
 USE_I18N = True
 
+# USE_L10N системную локаль пользователя, на основе заголовков Accept-Language, посылаемых браузером
+
 USE_L10N = True
+#USE_L10N = False
+DATE_FORMAT = 'd E Y'
 
 USE_TZ = True
 
