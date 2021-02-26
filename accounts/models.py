@@ -61,7 +61,7 @@ class Order(models.Model):
     product = models.ForeignKey(Pruduct, null = True, on_delete = models.SET_NULL, verbose_name = 'Товар')
     date_created = models.DateTimeField(auto_now_add=True, null = True, verbose_name = 'Дата')
     status = models.CharField(max_length = 200, null = True, choices = STATUS, verbose_name = 'Статус заказа')
-    note = models.CharField(max_length = 10000, null = True, verbose_name = 'Примечания')
+    note = models.CharField(max_length = 10000, null = True, verbose_name = 'Примечания', default = '-')
 
     class Meta:
         verbose_name_plural = 'Заказы'
