@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.forms import inlineformset_factory
 from .models import Customer, Pruduct, Order
 from .forms import OrderForm
+from .filters import OrderFilter
 
 def home(request):
     order = Order.objects.all()
@@ -32,7 +33,12 @@ def customer(request, pk):
     customer = Customer.objects.get(id = pk)
     orders = customer.order_set.all()
     orders_count = orders.count()
-    context = {'customer': customer, 'orders': orders, 'orders_count': orders_count}
+    # Фильтр заказа, request.GET - запрос от формы, queryset - набор полей из формы
+    myFilter = OrderFilter(request.GET, queryset = orders)
+    # Переопределяем заказы (orders) с параметрами из поиска (myFilter.qs)
+    orders = myFilter.qs
+    context = {'customer': customer, 'orders': orders, 'orders_count': orders_count,
+                'myfilter': myFilter}
     return render(request, 'accounts/customer.html', context)
 
 def createOrders(request, pk):
