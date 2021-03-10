@@ -5,7 +5,9 @@ from .models import Customer, Pruduct, Order
 from .forms import OrderForm, CreateUserForm
 from .filters import OrderFilter
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+
 
 def registerPage(request):
     form = CreateUserForm()
@@ -21,6 +23,18 @@ def registerPage(request):
     return render(request, 'accounts/register.html' ,context)
 
 def loginPage(request):
+    if request.method == 'POST':
+        # Из запросв получаем логин и пароль
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        # Делаем аунтификацию
+        user = authenticate(request, username = username, password = password)
+        # Если пользователь существует в системе
+        if user is not None:
+            login(request, user)
+            return redirect('home')
+
     context = {}
     return render(request, 'accounts/login.html', context)
 
