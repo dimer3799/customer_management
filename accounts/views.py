@@ -5,7 +5,7 @@ from .models import Customer, Pruduct, Order
 from .forms import OrderForm, CreateUserForm
 from .filters import OrderFilter
 from django.contrib.auth.forms import UserCreationForm
-
+from django.contrib import messages
 
 def registerPage(request):
     form = CreateUserForm()
@@ -13,6 +13,9 @@ def registerPage(request):
         form = CreateUserForm(request.POST)
         if form.is_valid():
             form.save()
+            user= form.cleaned_data.get('username')
+            messages.success(request, 'Аккаунт успешно создан,' + user )
+            return redirect('login')
     context = {'form': form}
 
     return render(request, 'accounts/register.html' ,context)
