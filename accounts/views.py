@@ -8,36 +8,52 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 
+from django.contrib.auth.decorators import login_required
+
 
 def registerPage(request):
-    form = CreateUserForm()
-    if request.method == 'POST':
-        form = CreateUserForm(request.POST)
-        if form.is_valid():
-            form.save()
-            user= form.cleaned_data.get('username')
-            messages.success(request, 'Аккаунт успешно создан,' + user )
-            return redirect('login')
-    context = {'form': form}
+    # Если пользователь уже авторизован
+    if request.user.is_authenticated:
+        return redirect('home')
+    else:
+        form = CreateUserForm()
+        if request.method == 'POST':
+            form = CreateUserForm(request.POST)
+            if form.is_valid():
+                form.save()
+                user= form.cleaned_data.get('username')
+                messages.success(request, 'Аккаунт успешно создан,' + user )
+                return redirect('login')
+        context = {'form': form}
 
-    return render(request, 'accounts/register.html' ,context)
+        return render(request, 'accounts/register.html' ,context)
 
 def loginPage(request):
-    if request.method == 'POST':
-        # Из запросв получаем логин и пароль
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-
-        # Делаем аунтификацию
-        user = authenticate(request, username = username, password = password)
-        # Если пользователь существует в системе
-        if user is not None:
-            login(request, user)
+    if request.user.is_authenticated:
             return redirect('home')
+    else:
+        if request.method == 'POST':
+            # Из запросв получаем логин и пароль
+            username = request.POST.get('username')
+            password = request.POST.get('password')
 
-    context = {}
-    return render(request, 'accounts/login.html', context)
+            # Делаем аунтификацию
+            user = authenticate(request, username = username, password = password)
+            # Если пользователь существует в системе
+            if user is not None:
+                login(request, user)
+                return redirect('home')
+            else:
+                messages.info(request, 'Логин или пароль неверный')
+        context = {}
+        return render(request, 'accounts/login.html', context)
 
+def logoutUser(request):
+    logout(request)
+    return redirect('login')
+
+# Декоратор перенаправляет на страницу login если пользователь не авторизован
+@login_required(login_url='login')
 def home(request):
     order = Order.objects.all()
     customer = Customer.objects.all()
@@ -54,13 +70,17 @@ def home(request):
                'total_order': total_order, 'delivered': delivered, 'pending': pending}
     
     return render(request, 'accounts/dashboard.html', context)
-    
+
+# Декоратор перенаправляет на страницу login если пользователь не авторизован
+@login_required(login_url='login')
 def products(request):
     # Выбрать из базы всю пролукцию
     products = Pruduct.objects.all()
     # {'pruducts':products} - передать в шаблон контекст для вывода
     return render(request, 'accounts/products.html', {'products':products})
 
+# Декоратор перенаправляет на страницу login если пользователь не авторизован
+@login_required(login_url='login')
 def customer(request, pk):
     # Получить пользователя по id
     customer = Customer.objects.get(id = pk)
@@ -74,6 +94,8 @@ def customer(request, pk):
                 'myfilter': myFilter}
     return render(request, 'accounts/customer.html', context)
 
+# Декоратор перенаправляет на страницу login если пользователь не авторизован
+@login_required(login_url='login')
 def createOrders(request, pk):
     # inlineformset_factory - объединение моделей в форме Customer (родительский объект) Order (дочерний объект)
     # fields - разрешение полей для Order (заказа) - продукция и статус
@@ -97,7 +119,8 @@ def createOrders(request, pk):
     context = {'formset': formset}
     return render(request, 'accounts/order_form.html', context)
 
-
+# Декоратор перенаправляет на страницу login если пользователь не авторизован
+@login_required(login_url='login')
 def updateOrder(request, pk):
     # Обновление заказа
     order = Order.objects.get(id = pk)
@@ -114,7 +137,8 @@ def updateOrder(request, pk):
     context = {'form': form}
     return render(request, 'accounts/order_form.html', context)
 
-
+# Декоратор перенаправляет на страницу login если пользователь не авторизован
+@login_required(login_url='login')
 def deleteOrder(request, pk):
     # Удаление товара
     order = Order.objects.get(id = pk)
