@@ -7,7 +7,7 @@ from .filters import OrderFilter
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .decorations import unauthenticated_user, allowed_user
+from .decorations import unauthenticated_user, allowed_user, admin_only
 
 from django.contrib.auth.decorators import login_required
 
@@ -48,7 +48,7 @@ def logoutUser(request):
 
 # Декоратор перенаправляет на страницу login если пользователь не авторизован
 @login_required(login_url='login')
-@allowed_user(allowed_roles = ['admin'])
+@admin_only
 def home(request):
     order = Order.objects.all()
     customer = Customer.objects.all()
@@ -80,6 +80,7 @@ def products(request):
 
 # Декоратор перенаправляет на страницу login если пользователь не авторизован
 @login_required(login_url='login')
+@allowed_user(allowed_roles = ['admin'])
 def customer(request, pk):
     # Получить пользователя по id
     customer = Customer.objects.get(id = pk)
@@ -95,6 +96,7 @@ def customer(request, pk):
 
 # Декоратор перенаправляет на страницу login если пользователь не авторизован
 @login_required(login_url='login')
+@allowed_user(allowed_roles = ['admin'])
 def createOrders(request, pk):
     # inlineformset_factory - объединение моделей в форме Customer (родительский объект) Order (дочерний объект)
     # fields - разрешение полей для Order (заказа) - продукция и статус
@@ -120,6 +122,7 @@ def createOrders(request, pk):
 
 # Декоратор перенаправляет на страницу login если пользователь не авторизован
 @login_required(login_url='login')
+@allowed_user(allowed_roles = ['admin'])
 def updateOrder(request, pk):
     # Обновление заказа
     order = Order.objects.get(id = pk)
@@ -138,6 +141,7 @@ def updateOrder(request, pk):
 
 # Декоратор перенаправляет на страницу login если пользователь не авторизован
 @login_required(login_url='login')
+@allowed_user(allowed_roles = ['admin'])
 def deleteOrder(request, pk):
     # Удаление товара
     order = Order.objects.get(id = pk)
