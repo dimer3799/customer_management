@@ -7,7 +7,7 @@ from .filters import OrderFilter
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .decorations import unauthenticated_user
+from .decorations import unauthenticated_user, allowed_user
 
 from django.contrib.auth.decorators import login_required
 
@@ -48,6 +48,7 @@ def logoutUser(request):
 
 # Декоратор перенаправляет на страницу login если пользователь не авторизован
 @login_required(login_url='login')
+@allowed_user(allowed_roles = ['admin'])
 def home(request):
     order = Order.objects.all()
     customer = Customer.objects.all()
