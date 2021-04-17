@@ -3,4 +3,35 @@
 {% include 'accounts/status.html' %}
 <h3>Профиль пользователя</h3>
 
+<div class="row">
+	<div class="col-md">
+		<div class="card card-body">
+			<table class="table table-sm">
+				<tr>
+					<th>Товар</th>
+					<th>Категория</th>
+					<th>Дата заказа</th>
+					<th>Статус</th>
+					<th>Примечания</th>
+
+				</tr>
+				{% for order in orders %}
+				<tr>
+					<td>{{ order.product }}</td>
+					<td>{{ order.product.category }}</td>
+					<td>{{ order.date_created }}</td>
+					<td>{{ order.status }}</td>
+					<td>{{ order.note }}</td>
+				</tr>
+
+				{% endfor %}
+				<tr>
+
+				</tr>
+
+			</table>
+		</div>
+	</div>
+</div>
+
 {% endblock content %}

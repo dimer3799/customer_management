@@ -20,9 +20,16 @@ def registerPage(request):
         if form.is_valid():
             user = form.save()
             username = form.cleaned_data.get('username')
+            # Добавление нового пользователя в группу customer
             group = Group.objects.get(name = 'customer')
-            user.group.add(group)
-            messages.success(request, 'Аккаунт успешно создан,' + userusername )
+            user.groups.add(group)
+            # Создание клиента
+            Customer.objects.create(
+                user = user,
+                name=user.username
+            )
+
+            messages.success(request, 'Аккаунт успешно создан,' + username)
             return redirect('login')
     context = {'form': form}
     return render(request, 'accounts/register.html' ,context)
@@ -70,8 +77,20 @@ def home(request):
     
     return render(request, 'accounts/dashboard.html', context)
 
+
+# Декоратор перенаправляет на страницу login если пользователь не авторизован
+@login_required(login_url='login')
+# Декоратор дает доступ пользователю только с ролью customer
+@allowed_user(allowed_roles = ['customer'])
 def userPage(request):
-    context = {}
+    orders = request.user.customer.order_set.all()
+    # Общее количество заказов
+    total_order = orders.count()
+    # Выбираем заказы с фильтром -доставлено
+    delivered = orders.filter(status = 'Доставлено').count()
+    # Выбираем заказы с фильтром -в ожидании
+    pending = orders.filter(status = 'В ожидании').count()
+    context = {'orders': orders, 'total_order': total_order, 'delivered': delivered, 'pending': pending}
     return render(request, 'accounts/user.html', context)
 
 # Декоратор перенаправляет на страницу login если пользователь не авторизован
