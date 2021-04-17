@@ -8,6 +8,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .decorations import unauthenticated_user, allowed_user, admin_only
+from django.contrib.auth.models import Group
 
 from django.contrib.auth.decorators import login_required
 
@@ -17,9 +18,11 @@ def registerPage(request):
     if request.method == 'POST':
         form = CreateUserForm(request.POST)
         if form.is_valid():
-            form.save()
-            user= form.cleaned_data.get('username')
-            messages.success(request, 'Аккаунт успешно создан,' + user )
+            user = form.save()
+            username = form.cleaned_data.get('username')
+            group = Group.objects.get(name = 'customer')
+            user.group.add(group)
+            messages.success(request, 'Аккаунт успешно создан,' + userusername )
             return redirect('login')
     context = {'form': form}
     return render(request, 'accounts/register.html' ,context)
@@ -48,6 +51,7 @@ def logoutUser(request):
 
 # Декоратор перенаправляет на страницу login если пользователь не авторизован
 @login_required(login_url='login')
+# Декоратор дает доступ пользователю только с ролью admin
 @admin_only
 def home(request):
     order = Order.objects.all()
@@ -80,6 +84,7 @@ def products(request):
 
 # Декоратор перенаправляет на страницу login если пользователь не авторизован
 @login_required(login_url='login')
+# Декоратор дает доступ пользователю только с ролью admin
 @allowed_user(allowed_roles = ['admin'])
 def customer(request, pk):
     # Получить пользователя по id
@@ -96,6 +101,7 @@ def customer(request, pk):
 
 # Декоратор перенаправляет на страницу login если пользователь не авторизован
 @login_required(login_url='login')
+# Декоратор дает доступ пользователю только с ролью admin
 @allowed_user(allowed_roles = ['admin'])
 def createOrders(request, pk):
     # inlineformset_factory - объединение моделей в форме Customer (родительский объект) Order (дочерний объект)
@@ -122,6 +128,7 @@ def createOrders(request, pk):
 
 # Декоратор перенаправляет на страницу login если пользователь не авторизован
 @login_required(login_url='login')
+# Декоратор дает доступ пользователю только с ролью admin
 @allowed_user(allowed_roles = ['admin'])
 def updateOrder(request, pk):
     # Обновление заказа
@@ -141,6 +148,7 @@ def updateOrder(request, pk):
 
 # Декоратор перенаправляет на страницу login если пользователь не авторизован
 @login_required(login_url='login')
+# Декоратор дает доступ пользователю только с ролью admin
 @allowed_user(allowed_roles = ['admin'])
 def deleteOrder(request, pk):
     # Удаление товара

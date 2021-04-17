@@ -11,13 +11,15 @@ def unauthenticated_user(view_func):
     return wrapper_func
 
 def allowed_user(allowed_roles = []):
+    # Декоратор проверяет есть ли переданная роль у пользователя
     def decorator (view_func):
         def wrapper_func(request, *args, **kwargs):
 
             group = None
             if request.user.groups.exists():
                 group = request.user.groups.all()[0].name
-
+            print('Запрос на роль:', allowed_roles)
+            print('Пользователь состоит в групах', group)
             if group in allowed_roles:
                 return view_func(request, *args, **kwargs)
             else:
@@ -26,6 +28,7 @@ def allowed_user(allowed_roles = []):
     return decorator
 
 def admin_only(view_func):
+    # Декоратор для проверки на роль админа
     def wrapper_func(request, *args, **kwargs):
         group = None
         if request.user.groups.exists():
