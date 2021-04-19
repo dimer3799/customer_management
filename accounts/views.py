@@ -181,3 +181,7 @@ def deleteOrder(request, pk):
 
     context = {'item': order}
     return render(request, 'accounts/delete_order.html', context)
+
+def userProfile(request):
+    context = {}
+    return render(request, 'accounts/account_settings.html', context)

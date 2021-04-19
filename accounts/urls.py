@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import home, products, customer, createOrders, updateOrder, deleteOrder, registerPage, loginPage, logoutUser, userPage
+from .views import home, products, customer, createOrders, updateOrder, deleteOrder, registerPage, loginPage, logoutUser, userPage, userProfile
 
 urlpatterns = [
     path('', home, name = 'home'),
@@ -7,6 +7,7 @@ urlpatterns = [
     path('login', loginPage, name = 'login'),
     path('logout/', logoutUser, name = 'logout'),
     path('user/', userPage, name = 'user-page'),
+    path('settings/', userProfile, name = 'account'),
     path('products', products, name = 'products'),
     # <str:pk> передаем строковое занчение в pk
     path('customer/<str:pk>', customer, name = 'customer'),
