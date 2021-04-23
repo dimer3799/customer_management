@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.forms import inlineformset_factory
 from .models import Customer, Pruduct, Order
-from .forms import OrderForm, CreateUserForm
+from .forms import OrderForm, CreateUserForm, CustomerForm
 from .filters import OrderFilter
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
@@ -72,9 +72,9 @@ def home(request):
     # Выбираем заказы с фильтром -в ожидании
     pending = order.filter(status = 'В ожидании').count()
 
-    context = {'orders': order, 'customers': customer , 'total_customers': total_customers, 
+    context = {'orders': order, 'customers': customer , 'total_customers': total_customers,
                'total_order': total_order, 'delivered': delivered, 'pending': pending}
-    
+
     return render(request, 'accounts/dashboard.html', context)
 
 
@@ -130,7 +130,7 @@ def createOrders(request, pk):
     customer = Customer.objects.get(id = pk)
     # Форма с набором OrderFormSet, instance - ссылается на объект customer
     formset = OrderFormSet(queryset = Order.objects.none(), instance = customer)
-    # Создание заказа 
+    # Создание заказа
     #form = OrderForm(initial = {'customer':customer})
     # При отправленной форме с данными
     if request.method == 'POST':
@@ -182,6 +182,18 @@ def deleteOrder(request, pk):
     context = {'item': order}
     return render(request, 'accounts/delete_order.html', context)
 
+# Декоратор перенаправляет на страницу login если пользователь не авторизован
+@login_required(login_url='login')
+# Декоратор дает доступ пользователю только с ролью customer
+@allowed_user(allowed_roles = ['customer'])
 def userProfile(request):
-    context = {}
+    customer = request.user.customer
+    form = CustomerForm(instance = customer)
+    if request.method == 'POST':
+        form = CustomerForm(request.POST, request.FILES,instance=customer)
+        if form.is_valid():
+            form.save()
+    
+    context = {'form':form}
     return render(request, 'accounts/account_settings.html', context)
+    

@@ -6,12 +6,12 @@ from django.contrib.auth.models import User
 class Customer(models.Model):
     # Клиенты
     # поле user отоношение к модели User один к одному
-    user = models.OneToOneField(User, null = True, on_delete = models.CASCADE, verbose_name = 'Пользователь')
+    user = models.OneToOneField(User, null = True, blank = True, on_delete = models.CASCADE, verbose_name = 'Пользователь')
     name = models.CharField(max_length=200, null = True, verbose_name = 'ФИО')
     phone = models.CharField(max_length=200, null = True, verbose_name = 'Телефон')
     email = models.CharField(max_length=200, null = True, verbose_name = 'Эл. почта')
     date_created = models.DateTimeField(auto_now_add=True, null = True, verbose_name = 'Дата')
-    profile_pic = models.ImageField(null = True, blank = True)
+    profile_pic = models.ImageField(default="picture1.png",null = True, blank = True)
 
     def __str__(self):
         return self.name
